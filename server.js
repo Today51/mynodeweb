@@ -77,7 +77,7 @@ async function run(){
   let data = await getMysqlDataByName(connection,"上海世纪公园");
   console.log(data);
 }  
-
+console.log("xx")
 run();
 
 
