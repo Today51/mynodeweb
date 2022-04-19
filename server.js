@@ -4,6 +4,7 @@ const mysql = require("mysql");
 const bodyParser = require("body-parser")
 const cors = require("cors");
 
+
 // app.all("*", function (req, res, next) {
 // 	//设置允许跨域的域名，*代表允许任意域名跨域
 // 	res.header("Access-Control-Allow-Origin", "*");
@@ -28,6 +29,7 @@ const directory = require("./util/nameconfig");
 // 引入路由
 const users = require("./routes/user");
 
+
 // 使用路由
 app.use("/",users);
 
@@ -39,6 +41,34 @@ app.listen(port, () => {
   console.log(`监听端口${port}`);
 })
 
+// var connection = mysql.createConnection({
+//   host: '127.0.0.1',
+//   port: 3306,
+//   user: 'root',
+//   password: '5115wuyi',
+//   database: 'scenicnumber'
+// });
+// connection.connect();
 
+// for(let key in nameconfig){
+//   var  sql = `select id,name,level,num,state,DATE_FORMAT(time,'%Y-%m-%d %H:%i:%s') as time from ${nameconfig[key]}  where num!=0 and state not like '%闭园%'`;
+// connection.query(sql,function (err, data) {
+//     if(err){
+//         console.log('[SELECT ERROR] - ',err.message);
+//         return;
+//     }
+
+//     if(data)
+//     {
+//       let long,name,lastData;
+//       long = data.length;
+//       name = key;
+//       lastData = data[long-1];
+//       let sum={name:name,long:long,lastData:lastData};
+//       console.log(sum);
+//     }
+// });
+// }
+// connection.end();
 
 

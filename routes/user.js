@@ -12,7 +12,8 @@ const methods = require("../controllers/controller");
 router.get("/getTenData",methods.getTenData);
 router.get("/getById",methods.getById);
 router.post("/getCode",methods.sendCode);
-
+router.post("/getCode",methods.sendCode);
+router.get("/getValidDatas",methods.getValidDatas);
 module.exports = router;
 
 
