@@ -7,8 +7,8 @@ module.exports = {
     port: 3306,
     user: 'root',
     password: '5115wuyi',
-    database: 'scenicnumber'
-    // connectionLimit: 20
+    database: 'scenicnumber',
+    connectionLimit: 200
   },
   // 使用连接池的方式
   sqlConnect:function(sql,sqlArr,callBack){
