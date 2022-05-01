@@ -1,6 +1,7 @@
 const dbconfig = require("../util/dbconfig");
 const nameconfig = require("../util/nameconfig");
 const dborder = require("../util/dborder");
+const predictMethod = require("../model")
 
 // select id,name,level,num,state,DATE_FORMAT(time,'%Y-%m-%d %H:%i:%s') as time from ${nameconfig[name]}  where num!=0 and state not like '%闭园%' order by id limit 10
 //获取最开始5日的有效数据 数据不为0且状态不为闭园 这里数据输出是倒叙century
@@ -30,12 +31,25 @@ const dborder = require("../util/dborder");
 //  上海醉白池公园 提前因为疫情，暂时闭园,数据过少
 //  上海召稼楼景区 存在某天闭园，数据过少
 //  舍弃多个景区
+const predictData ={
+  "上海世纪公园":[],
+  "上海长风公园":[],
+  "上海共青森林公园":[],
+  "上海大观园":[],
+  "上海顾村公园景区":[],
+  "上海古猗园":[],
+  "黄兴公园":[],
+  "上海鲁迅公园":[],
+  "上海闵行体育公园":[],
+  "东方明珠广播电视塔":[],
+  "朱家角古镇":[],
+}
 
-
-
+let AllRes=null;
 // 筛选掉闭园和季节性闭园的情况，计算日总人流数，
 
-getValidDatas=(req,res)=>{
+function getValidDatas(req,res){
+  AllRes=res;
   let {name} = req.query;
   let sql = `select id,name,level,num,state,DATE_FORMAT(time,'%Y-%m-%d %H:%i:%s') as time from ${nameconfig[name]}  where state not like '%闭园%' order by id limit ${dborder[name]}`;
   let sqlArr = [name];
@@ -43,18 +57,42 @@ getValidDatas=(req,res)=>{
     if(err){
       console.log(err);
     }else{
+      let long=0;
+      long=getLastDataRows(data);
       console.log("成功获取数据");
-      res.send(data);
+      console.log("模型训练",name);
+      if(predictData[name].length==0){
+        new Promise((resolve,reject)=>{
+          let myData=predictMethod.getTrainModel(data,long);
+          resolve(myData)
+        }).then((Myres)=>{
+          predictData[name]=Myres;
+          console.log("predictData[name]1",predictData[name])
+          AllRes.send({data:data,predictData:predictData[name]});    
+        })
+      }else{
+      console.log("predictData[name]2",predictData[name])
+      AllRes.send({data:data,predictData:predictData[name]});    
+      }   
     }
   };
   dbconfig.sqlConnect(sql,sqlArr,callBack);
 }
 
-
-
-
-
-
+function getLastDataRows(data){
+  let long=0;
+  let oneDate = data[data.length - 1].time.split(" ")[0];
+  for(let i=data.length-1;i>=0;i--){
+    let time = data[i].time.split(" ");
+    let TempDate = time[0];
+    if(oneDate!=TempDate){
+      // 是昨天
+      break;
+    }
+    long++;
+  }
+  return long;
+}
 
 
 getTenData=(req,res)=>{
